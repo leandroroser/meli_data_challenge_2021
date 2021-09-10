@@ -1,6 +1,0 @@
-{
-    "telemetry.enableCrashReporter": false,
-    "files.watcherExclude": {
-        "**/target": true
-    }
-}
