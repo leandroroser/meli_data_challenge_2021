@@ -14,7 +14,7 @@ For evaluation, given the item target stock, a prediction will be provided for t
 Check out the preprocessing Notebook or this kernel : https://www.kaggle.com/leangab/processing-meli-aug-05
 
 
-### Strategy 
+## Strategy 
 
 Data was pre-processed with Pyspark and modeled via XGBoost and a softmax objective function. Hyperparameters were optimized with Ray Tune. 
 
