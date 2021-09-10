@@ -4,8 +4,8 @@ from final_run import final_run
 
 def main():
     
-    processing()
-    optimize()
+   # processing()
+    #optimize(cpus = 8, gpus = 1)
     final_run()
     
     print("Success!")

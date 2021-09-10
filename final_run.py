@@ -11,6 +11,8 @@ from meli_functions import run
 import time
 import json
 import random
+import pickle
+import xgboost as xgb
 
 seed = 42
 random.seed(42)
@@ -22,8 +24,8 @@ def final_run():
     train = pd.read_parquet(os.path.join(datapath, "train_active.parquet"))
     validation = pd.read_parquet(os.path.join(datapath,"validation_active.parquet"))
     test = pd.read_parquet(os.path.join(datapath,  "test.parquet"))
+    maxval = pd.read_parquet(os.path.join(datapath,  "maxval.parquet"))
     test.sku = test.sku.astype("int64")
-
 
     train_predictor = "rolling_cumsum_1"
     train.rename({train_predictor:"target_stock"}, axis = 1, inplace = True)
@@ -57,34 +59,37 @@ def final_run():
     train["item_domain_id"] = le.transform(train["item_domain_id"])
     validation["item_domain_id"] = le.transform(validation["item_domain_id"])
     test["item_domain_id"] = le.transform(test["item_domain_id"])
-    pickle.dump(le, open("./labelencoder_item_domain_id", "wb"))
+    pickle.dump(le, open("./DATA/labelencoder_item_domain_id", "wb"))
+    
 
+    train.loc[:, "target_stock"] = train["target_stock"].astype("float32")
+    validation.loc[:,  "target_stock"] = validation["target_stock"].astype("float32")
+    train.loc[:, "item_domain_id"] = train["item_domain_id"].astype("int32")
+    validation.loc[:, "item_domain_id"] = validation["item_domain_id"].astype("int32")
+    test.loc[:, "target_stock"] = test["target_stock"].astype("float32")
+    test.loc[:, "item_domain_id"] = test["item_domain_id"].astype("int32")
 
-    x_train.loc[:, "target_stock"] = x_train["target_stock"].astype("float32")
-    x_val.loc[:,  "target_stock"] = x_val["target_stock"].astype("float32")
-    x_train.loc[:, "item_domain_id"] = x_train["item_domain_id"].astype("int32")
-    x_val.loc[:, "item_domain_id"] = x_val["item_domain_id"].astype("int32")
-
-    y_train = x_train.id
-    x_train = x_train.drop(["id"], axis = 1)
+    y_train = train.id
+    x_train = train.drop(["id"], axis = 1)
     y_train = y_train-1
 
-    y_val = x_val.id
-    x_val = x_val.drop(["id"], axis = 1)
+    y_val = validation.id
+    x_val = validation.drop(["id"], axis = 1)
     y_val = y_val-1
 
 
-
-    with open('best_config.json', 'r') as f:
+    with open('./DATA/best_config.json', 'r') as f:
         best_config = json.load(f)
 
 
-    model = run(best_config, x_train, x_val, y_val, y_val)
+        #model = run(best_config, x_train, x_val, y_val, y_val, maxval, seed)
 
-    pickle.dump(model, open('./xgbmodel.pkl', 'wb'))
+    #pickle.dump(model, open('./DATA/xgbmodel.pkl', 'wb'))
 
-    test = test[x_train.columns]
+    model = pickle.load(open('./DATA/xgbmodel.pkl', 'rb'))
+    
+    test = xgb.DMatrix(test[x_train.columns])
     print("predicting")
-    out = mod.predict_proba(test)
+    out = model.predict(test)
     out = pd.DataFrame(out)
-    out.to_csv("./out.csv", header = False, index = False, sep = ",", float_format='%.4f')
+    out.to_csv("./DATA/out.csv", header = False, index = False, sep = ",", float_format='%.4f')

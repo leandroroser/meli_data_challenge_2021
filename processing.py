@@ -10,7 +10,8 @@ from meli_functions import (create_window,
                            create_proportion_columns,
                            forward_fill,write_data,
                            are_consecutive_dates,
-                           get_days_active)
+                           get_days_active,
+                           get_dof)
 import numpy as np
 
 

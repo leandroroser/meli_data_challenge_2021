@@ -21,7 +21,7 @@ from ray import tune
 random.seed(42)
 
 
-def optimize():
+def optimize(cpus = 8, gpus = 1):
     datapath = "./DATA"
 
     train = pd.read_parquet(os.path.join(datapath, "train_active.parquet"))
@@ -62,10 +62,11 @@ def optimize():
     train["item_domain_id"] = le.transform(train["item_domain_id"])
     validation["item_domain_id"] = le.transform(validation["item_domain_id"])
     test["item_domain_id"] = le.transform(test["item_domain_id"])
-    pickle.dump(le, open("./labelencoder_item_domain_id", "wb"))
+    pickle.dump(le, open("./DATA/labelencoder_item_domain_id", "wb"))
 
 
     maxval = train.groupby("sku", dropna=True)["target_stock"].max()
+    pd.DataFrame(maxval).to_parquet("./DATA/maxval.parquet")
     qq = np.quantile(maxval[maxval.notna()], 0.25)
     #sns.histplot(maxval, bins = 200)
 
@@ -106,14 +107,13 @@ def optimize():
                     "null_weight" : tune.uniform(0, 1),
                     "outlier_weight": tune.uniform(0, 1),
                     "delta_inf": tune.uniform(0,6),
-                    "qq" : qq,
-                    "maxval" : maxval}
+                    "qq" : qq}
                     
     shutdown()
-    init(num_cpus=8, num_gpus=1)                      
+    init(num_cpus=cpus, num_gpus=gpus)                      
     start = time.time()
     analysis = tune_xgboost(seed = seed, data = {"x_train": x_train, "x_val":x_val, 
-                            "y_train": y_train, "y_val": y_val}, 
+                            "y_train": y_train, "y_val": y_val, "maxval" : maxval}, 
                             search_space = search_space, name = "xgboost_experiment")
     print('It takes %s minutes' % ((time.time() - start)/60))
 

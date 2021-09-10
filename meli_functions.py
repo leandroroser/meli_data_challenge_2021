@@ -18,7 +18,7 @@ import pickle
 import warnings
 from sklearn.preprocessing import OneHotEncoder
 from ray import tune, init, shutdown
-from ray.tune.schedulers import ASHAScheduler
+from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.integration.xgboost import TuneReportCheckpointCallback
 from datetime import datetime, timedelta
@@ -205,7 +205,7 @@ def fitness(config, checkpoint_dir=None, data = None, seed = None):
     x_val = data["x_val"]
     y_train = data["y_train"]
     y_val = data["y_val"]
-    maxval = config["maxval"]
+    maxval = data["maxval"]
     bounds  = config["qq"] - config["delta_inf"]
     cuts = pd.DataFrame(maxval.reset_index().values, columns = ["sku", "cut"]).reset_index(drop = True)
     cuts['cut'] = cuts['cut'].astype("float")
@@ -235,16 +235,16 @@ def fitness(config, checkpoint_dir=None, data = None, seed = None):
                   colsample_bylevel = min(config["colsample_bylevel"], 1),
                   tree_method = "gpu_hist",
                   eval_metric = "mlogloss", 
+                  objective = "multi:softmax",
                   booster = "gbtree",
                   num_class = 30,
-                  disable_default_eval_metric = 1,
+                  disable_default_eval_metric = 0,
                   seed = seed)
 
     model =   xgb.train(params, dtrain=dtrain,
-                    num_boost_round=300,
-                    obj="multi:softmax",
+                    num_boost_round=200,
                     evals=[(dvalid, 'dvalid')],
-                    callbacks=[TuneReportCheckpointCallback(filename="model.xgb")],
+                    callbacks=[TuneReportCheckpointCallback(filename="model_ray.xgb")],
                     verbose_eval= False)
                 
     del dtrain  
@@ -254,13 +254,13 @@ def fitness(config, checkpoint_dir=None, data = None, seed = None):
 
 
 
-def tune_xgboost(seed, data, name, search_space, resume = False, num_samples = 100, cpus = 4, gpus = 0.5):
+def tune_xgboost(seed, data, name, search_space, resume = False, num_samples = 20, cpus = 4, gpus = 0.5):
     """ Tune process to optimize hyperparameters
     """
 
-    scheduler = ASHAScheduler(
-        max_t=10,  
-        grace_period=1,
+    scheduler = AsyncHyperBandScheduler(
+        max_t=200,  
+        grace_period=1  ,
         reduction_factor=2)
 
     search_alg = HyperOptSearch(random_state_seed = seed)
@@ -285,7 +285,7 @@ def tune_xgboost(seed, data, name, search_space, resume = False, num_samples = 1
 
 
 
-def run(config, x_train, x_val, y_train, y_val):
+def run(config, x_train, x_val, y_train, y_val, maxval, seed):
     """ Run hyperparameter optimization for the best configuration
     """
 
@@ -316,10 +316,11 @@ def run(config, x_train, x_val, y_train, y_val):
                   subsample = min(config["subsample"], 1),
                   colsample_bytree = min(config["colsample_bytree"], 1),
                   colsample_bylevel = min(config["colsample_bylevel"], 1),
-                  tree_method = "gpu_hist",
+                  tree_method = "hist",
                   eval_metric = "mlogloss", 
                   booster = "gbtree",
                   num_class = 30,
+                  objective = "multi:softprob",
                   disable_default_eval_metric = 1,
                   seed = seed)
 
@@ -330,7 +331,6 @@ def run(config, x_train, x_val, y_train, y_val):
 
     model =   xgb.train(params, dtrain=dtrain,
                     num_boost_round=300,
-                    obj="multi:softmax",
                     evals=[(dvalid, 'dvalid')],
                     callbacks=[early_stop],
                     verbose_eval= True)
