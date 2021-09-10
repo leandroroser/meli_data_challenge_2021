@@ -25,7 +25,7 @@ The first portion of the data was used as training set and the second as validat
 ## Execution
 
 - Download the input files from 
-https://ml-challenge.mercadolibre.com/rules, and place them in the DATA folder
+https://ml-challenge.mercadolibre.com/rules, and place them into the DATA folder
 
 * Install the dependencies with pip via the requirements.txt file located in the main directory
 
