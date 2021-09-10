@@ -16,8 +16,7 @@ Checkout the preprocessing Notebook.
 
 ### Strategy 
 
-Data was pre-processed with Pyspark. XGboost with a softmax objective was used as model.
-Hyperparameters were optimized with Ray Tune. 
+Data was pre-processed with Pyspark and modeled via XGboost with a softmax objective function. Hyperparameters were optimized with Ray Tune. 
 
 
 ## Execution
