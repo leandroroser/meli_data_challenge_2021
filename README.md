@@ -18,7 +18,7 @@ Checkout the preprocessing Notebook.
 
 Data was pre-processed with Pyspark and modeled via XGboost and a softmax objective function. Hyperparameters were optimized with Ray Tune. 
 
-It was computed the cumulate sum for a given SKU during the first and the last 30 days. 
+It was computed the running total for a given SKU during the first and the last 30 days. 
 The first portion of the data was used as training set and the second as validation set.
 
 
