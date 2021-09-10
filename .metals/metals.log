@@ -1,0 +1,6 @@
+[0m2021.09.06 21:04:28 INFO  Started: Metals version 0.10.6 in workspace '/home/user/Downloads/meli_challenge/LATEST/REPO' for client Visual Studio Code - Insiders 1.59.0-insider.[0m
+[0m2021.09.06 21:04:34 INFO  time: initialize in 5.7s[0m
+[0m2021.09.06 21:04:36 WARN  Build server is not auto-connectable.[0m
+[0m2021.09.06 21:04:36 WARN  no build tool detected in workspace '/home/user/Downloads/meli_challenge/LATEST/REPO'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Sep 07, 2021 2:43:32 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
