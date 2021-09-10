@@ -33,6 +33,8 @@ def final_run():
 
     train.loc[train["target_stock"] != -1 , "target_stock"] = np.log(train.loc[train["target_stock"] != -1, "target_stock"] + 0.001)
     validation.loc[validation["target_stock"] != -1 ,"target_stock"] = np.log(validation.loc[validation["target_stock"] != -1, "target_stock"]  + 0.001)
+    test["target_stock"] = np.log(test["target_stock"]+ 0.001)
+
 
     train["target_stock"].replace(-1, np.NaN, inplace = True)
     validation["target_stock"].replace(-1, np.NaN, inplace = True)
