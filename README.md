@@ -34,4 +34,4 @@ https://ml-challenge.mercadolibre.com/rules, and place them in the DATA folder
 > python main.py 
 
 ## Results
-An csv with the outcome of the analysis is generated in the DATA folder.
+A csv with the outcome of the analysis will be generated in the DATA folder.
