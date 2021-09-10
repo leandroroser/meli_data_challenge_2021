@@ -31,7 +31,7 @@ https://ml-challenge.mercadolibre.com/rules, and place them into the DATA folder
 
 >  pip install -r requirements.txt
 
-* Then run the main.py:
+* Then run main.py:
 
 > python main.py 
 
