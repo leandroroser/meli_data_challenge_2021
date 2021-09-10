@@ -11,7 +11,7 @@ In the evaluation id given the item target stock, and t will provided a predicti
 
 ## Exploratory data analysis
 
-Checkout the preprocessing Notebook. 
+Checkout the preprocessing Notebook or this kernel : https://www.kaggle.com/leangab/processing-meli-aug-05
 
 
 ### Strategy 
