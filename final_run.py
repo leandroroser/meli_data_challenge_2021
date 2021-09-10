@@ -82,11 +82,9 @@ def final_run():
         best_config = json.load(f)
 
 
-        #model = run(best_config, x_train, x_val, y_val, y_val, maxval, seed)
+    model = run(best_config, x_train, x_val, y_val, y_val, maxval, seed)
 
-    #pickle.dump(model, open('./DATA/xgbmodel.pkl', 'wb'))
-
-    model = pickle.load(open('./DATA/xgbmodel.pkl', 'rb'))
+    pickle.dump(model, open('./DATA/xgbmodel.pkl', 'wb'))
     
     test = xgb.DMatrix(test[x_train.columns])
     print("predicting")
