@@ -6,7 +6,7 @@ https://ml-challenge.mercadolibre.com/
 
 The task is to predict how long it will take for the inventory of a certain item to be sold completely. 
 
-In the evaluation id given the item target stock, and itt be will provided a prediction for the number of days it will take an item to run out of stock. Possible values range from 1 to 30. Rather than giving a point estimate, it is expected to provide a score for each the possible outcomes.
+For evaluation, given the item target stock, a prediction will be provided for the number of days it will take an item to run out of stock. Possible values range from 1 to 30. Rather than giving a point estimate, it is expected to provide a score for each the possible outcomes.
 
 
 ## Exploratory data analysis
